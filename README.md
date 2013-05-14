@@ -10,3 +10,5 @@ Topic 2:
 Find out the best algorithm to solve the famous Fermat-Torricelli problem with weights. We shall investigate three methods to solve them.For details and papers about this topic see: 
 
 https://drive.google.com/folderview?id=0B-LLRo89XGyvVWhhQnROTTVJWlU&usp=sharing
+
+A "little" problem to think of: How to generalize the SDP method into d dimensions instead of d = 2?
