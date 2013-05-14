@@ -11,5 +11,5 @@ Find out the best algorithm to solve the famous Fermat-Torricelli problem with w
 
 https://drive.google.com/folderview?id=0B-LLRo89XGyvVWhhQnROTTVJWlU&usp=sharing
 
-Additional problems to think of: (1) How to generalize the SDP method into d dimensions instead of d = 2? (2) Is it possible to geometrically construct Fermat-Torricelli point in Sage?
+Additional problems to think of: (1) How to generalize the SDP method into d dimensions instead of d = 2? (2) Is it possible to geometrically construct Fermat-Torricelli point in Sage? (3) We know Euclidean norm is not quite robust, what about changing Euclidean norm into a more robust norm like l_1 norm?
 
