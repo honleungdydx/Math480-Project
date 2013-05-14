@@ -15,6 +15,6 @@ Further investigations:
 (1) How to generalize the SDP method into d dimensions instead of d = 2? 
 (2) If all the weights equal 1, the SDP problem looks "symmetric", in the sense that permutation of some variables unchanges the problem, can we do something based on this?
 (3) It seems the matrices involved in the SDP formulation are sparse. Anything we can do concerning this point?
-(4) Is it possible to geometrically construct Fermat-Torricelli point in Sage? 
+(4) Is it possible to geometrically construct Fermat-Torricelli point (together with reading the minimizer) in Sage? 
 (5) Assume all the weights equal 1, we know Euclidean norm is not quite robust, what about changing Euclidean norm into a more robust norm like l_1 norm?
 
