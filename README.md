@@ -8,3 +8,7 @@ Investigate this challenge problem: given a binary integer a, define an operatio
 
 Topic 2: 
 Find out the best algorithm to solve the famous Fermat-Torricelli problem with weights. We have three methods in hand. This project is to investigate them.
+
+For details and papers about this problem see: 
+
+https://drive.google.com/folderview?id=0B-LLRo89XGyvVWhhQnROTTVJWlU&usp=sharing
