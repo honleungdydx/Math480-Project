@@ -12,9 +12,10 @@ Find out the best algorithm to solve the famous Fermat-Torricelli problem with w
 https://drive.google.com/folderview?id=0B-LLRo89XGyvVWhhQnROTTVJWlU&usp=sharing
 
 Further investigations: 
-(1) How to generalize the SDP method into d dimensions instead of d = 2? 
-(2) If all the weights equal 1, the SDP problem looks "symmetric", in the sense that permutation of some variables unchanges the problem, can we do something based on this?
-(3) It seems the matrices involved in the SDP formulation are sparse. Anything we can do concerning this point?
-(4) Is it possible to geometrically construct Fermat-Torricelli point (together with reading the minimizer) in Sage? 
-(5) Assume all the weights equal 1, we know Euclidean norm is not quite robust, what about changing Euclidean norm into a more robust norm like l_1 norm?
+(1) Speed up all the algorithms involved.
+(2) How to generalize the SDP method into d dimensions instead of d = 2? 
+(3) If all the weights equal 1, the SDP problem looks "symmetric", in the sense that permutation of some variables unchanges the problem, can we do something based on this?
+(4) It seems the matrices involved in the SDP formulation are sparse. Anything we can do concerning this point?
+(5) Is it possible to geometrically construct Fermat-Torricelli point (together with reading the minimizer) in Sage? 
+(6) Assume all the weights equal 1, we know Euclidean norm is not quite robust, what about changing Euclidean norm into a more robust norm like l_1 norm?
 
