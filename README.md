@@ -1,7 +1,7 @@
 Math480-Project
 ===============
 
-Hao Chen, Hon Leung Lee, Feng Qian, Di Wu
+Hao Chen, Xin Guo, Hon Leung Lee, Di Wu
 
 
 Topic 2: 
