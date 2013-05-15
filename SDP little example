@@ -39,3 +39,23 @@ timeit('solvers.sdp(c, Gs=G, hs=h)')
 sol = solvers.sdp(c, Gs=G, hs=h)
 print(sol['x'])
 sol['primal objective']
+
+
+Output
+=========
+125 loops, best of 3: 6.73 ms per loop
+     pcost       dcost       gap    pres   dres   k/t
+ 0: -7.8505e-17 -1.1102e-16  5e+00  2e+00  3e-16  1e+00
+ 1:  1.0201e+00  1.0171e+00  7e-01  3e-01  4e-16  2e-01
+ 2:  1.7252e+00  1.7249e+00  1e-02  5e-03  3e-16  3e-03
+ 3:  1.7320e+00  1.7320e+00  1e-04  5e-05  4e-16  3e-05
+ 4:  1.7321e+00  1.7321e+00  1e-06  5e-07  9e-16  3e-07
+ 5:  1.7321e+00  1.7321e+00  1e-08  5e-09  4e-16  3e-09
+Optimal solution found.
+[ 5.00e-01]
+[ 2.89e-01]
+[ 5.77e-01]
+[ 5.77e-01]
+[ 5.77e-01]
+
+1.732050800688066
