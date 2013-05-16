@@ -1,3 +1,9 @@
+"""
+This program computes the Fermat-Toricelli point of an equilateral triangle in R^2. 
+It is well known that this point is the centroid of the triangle. 
+"""
+
+
 import math
 from cvxopt import matrix, solvers
 
