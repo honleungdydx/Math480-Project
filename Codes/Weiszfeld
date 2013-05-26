@@ -61,7 +61,7 @@ import math
 def WeiszSolve(y,a,eta):
     x = numpy.array(y)
     count = 1
-    while (r(x,a,eta) == 0 or (r(x,a,eta)>0 and r(x,a,eta)>eta_function(x,a,eta))) and count <= 100:
+    while (r(x,a,eta)>0 and r(x,a,eta)>eta_function(x,a,eta)) and count <= 100:
         x = T(x,a,eta)
         count += 1
     return x
