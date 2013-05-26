@@ -1,0 +1,81 @@
+"""
+x = numpy array, y = list
+"""
+
+import numpy
+
+def dist(x,y):
+    return numpy.linalg.norm(x-numpy.array(y))
+
+"""
+x = numpy array, a = list of lists, eta = list
+"""
+
+def beta(x,a,eta):
+    b = 0
+    for i in range(0,len(a)):
+        if dist(x,a[i]) > 0:
+            b += eta[i]/dist(x,a[i])
+    return 1/b
+    
+"""
+x = numpy array, a = list of lists, eta = list
+"""
+
+def Tilde_T(x,a,eta):
+    t = numpy.array([0]*len(a[0]))
+    for i in range(0,len(a)):
+        if dist(x,a[i]) > 0:
+            t = t + (eta[i]/dist(x,a[i]))*numpy.array(a[i])
+    return beta(x,a,eta)*t
+
+def eta_function(x,a,eta):
+    e = 0
+    for i in range(0,len(a)):
+        if dist(x,a[i]) == 0:
+           e = eta[i]
+    return e
+    
+def r(x,a,eta):
+    s = numpy.array([0]*len(a[0]))
+    for i in range(0,len(a)):
+        if dist(x,a[i])>0:
+            s = s + (eta[i]/dist(x,a[i]))*(numpy.array(a[i])-x)
+    return numpy.linalg.norm(s)
+    
+def T(x,a,eta):
+    if eta_function(x,a,eta) == 0 and r(x,a,eta) == 0:
+        return Tilde_T(x,a,eta)
+    elif eta_function(x,a,eta) > r(x,a,eta) and r(x,a,eta) == 0:
+        return x
+    else:
+        return max([1- (eta_function(x,a,eta)/r(x,a,eta)),0.])*Tilde_T(x,a,eta) + \
+        min([1,eta_function(x,a,eta)/r(x,a,eta)])*x
+        
+"""
+y = list of initial point, a = list, eta = list
+"""
+
+import math
+
+def WeiszSolve(y,a,eta):
+    x = numpy.array(y)
+    count = 1
+    while (r(x,a,eta) == 0 or (r(x,a,eta)>0 and r(x,a,eta)>eta_function(x,a,eta))) and count <= 100:
+        x = T(x,a,eta)
+        count += 1
+    return x
+    
+=====================
+Testing Codes
+=====================
+    
+dist([1.,4.],[0.5,7.])
+beta(numpy.array([0.5,0.3]),[[0.,1.],[1.,2.],[0.5,-3.]],[1.,1.,1.])*numpy.array([1.,1.])
+Tilde_T(numpy.array([0.5,0.3]),[[0.,1.],[1.,2.],[0.5,-3.]],[1.,1.,1.])
+eta_function(numpy.array([1.,2.]),[[0.,1.],[1.,2.],[0.5,-3.]],[1.,4.,1.])
+r(numpy.array([1.,2.]),[[0.,1.],[1.,2.],[0.5,-3.]],[1.,4.,1.])
+T(numpy.array([0.5,10.]),[[0.,1.],[1.,2.],[0.5,-3.]],[1.,4.,1.])
+WeiszSolve([0.,0.],[[0.,0.],[1.,0.],[0.5,math.sqrt(3.)/2]],[1.,1.,1.])
+Output: array([ 0.5       ,  0.28867513])
+
