@@ -63,6 +63,13 @@ Output: A list including the number of iterations, minimum value and the
         Fermat point.
 """
 def weiszsolve(y,a,eta):
+    t = len(a)
+    z = 0
+    for i in range(0,t):
+        if (len(a[i-1]) != len(a[0])):
+            z += 1
+    if (z!=0):
+        print "The points may have different dimensions."
     x = numpy.array(y)
     count = 0
     while (r(x,a,eta)>0 and r(x,a,eta)>eta_function(x,a,eta)) and count <= 99:
@@ -83,6 +90,13 @@ Input: a = list of given points
 Output: The output from the solver in cvxopt
 """
 def socpsolve(a,eta):
+    t = len(a)
+    z = 0
+    for i in range(0,t):
+        if (len(a[i-1]) != len(a[0])):
+            z += 1
+    if (z!=0):
+        print "The points may have different dimensions."
     m = len(eta)
     d = len(a[0])
     for i in range(1,d+1):
@@ -125,8 +139,14 @@ Input: b = list of given points
 Output: The output from the solver in cvxopt
 """
 def sdpsolve(b,eta):
-    a = []
     m = len(b)
+    z = 0
+    for i in range(0,m):
+        if (len(b[i-1]) != len(b[0])):
+            z += 1
+    if (z!=0):
+        print "The points may have different dimensions."
+    a = []
     for i in range(0,m):
         a.append(b[i][0])
         a.append(b[i][1])
@@ -182,8 +202,7 @@ def gen_points(n, d, mu, sigma):
             p[j] = random.normalvariate(mu, sigma)
         points.append(p)
     return points
-
-
+    
 # Main process
 
 """
@@ -227,7 +246,6 @@ class FermatTorri(object):
             print "Semidefinite Programming"
         print "The " + str(len(self.points)) + " points are: " + str(self.points)
         print "The " + str(len(self.weights)) + " weights are: " + str(self.weights)
-
 
     def iterations(self):
         if self.method == "weisz":
