@@ -15,7 +15,7 @@ Besides our discussion about how to solve these two problems, the following show
 
 Hao Chen: Wrote the Sage Worksheet and report (in pdf) for Topic 1
 
-Xin Guo: Contributed 21 lines in the codes of Topic 2
+Xin Guo: Contributed 7 lines in the codes of Topic 2
 
 Hon Leung Lee: Wrote the Sage Worksheet and report (in pdf) for Topic 2
  
