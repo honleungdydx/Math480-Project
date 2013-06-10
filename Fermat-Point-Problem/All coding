@@ -1,0 +1,262 @@
+%python
+
+import math
+import numpy
+from cvxopt import matrix, solvers
+from timeit import Timer
+import random
+
+# Subroutines for Weiszfeld
+
+def dist(x,y):
+    return numpy.linalg.norm(x-numpy.array(y))
+
+def beta(x,a,eta):
+    b = 0
+    for i in range(0,len(a)):
+        if dist(x,a[i]) > 0:
+            b += eta[i]/dist(x,a[i])
+    return 1/b
+
+def Tilde_T(x,a,eta):
+    t = numpy.array([0]*len(a[0]))
+    for i in range(0,len(a)):
+        if dist(x,a[i]) > 0:
+            t = t + (eta[i]/dist(x,a[i]))*numpy.array(a[i])
+    return beta(x,a,eta)*t
+
+def eta_function(x,a,eta):
+    e = 0
+    for i in range(0,len(a)):
+        if dist(x,a[i]) == 0:
+           e = eta[i]
+    return e
+
+def r(x,a,eta):
+    s = numpy.array([0]*len(a[0]))
+    for i in range(0,len(a)):
+        if dist(x,a[i])>0:
+            s = s + (eta[i]/dist(x,a[i]))*(numpy.array(a[i])-x)
+    return numpy.linalg.norm(s)
+
+def T(x,a,eta):
+    if eta_function(x,a,eta) == 0 and r(x,a,eta) == 0:
+        return Tilde_T(x,a,eta)
+    elif eta_function(x,a,eta) > r(x,a,eta) and r(x,a,eta) == 0:
+        return x
+    else:
+        return max([1- (eta_function(x,a,eta)/r(x,a,eta)),0.])*Tilde_T(x,a,eta) + \
+        min([1,eta_function(x,a,eta)/r(x,a,eta)])*x
+
+def weiszsolve(y,a,eta):
+    x = numpy.array(y)
+    count = 0
+    while (r(x,a,eta)>0 and r(x,a,eta)>eta_function(x,a,eta)) and count <= 99:
+        x = T(x,a,eta)
+        count += 1
+    L = [count]
+    L.append(sum([dist(x,a[i]) for i in range(0,len(a))]))
+    L.append(x.tolist())
+    return L
+
+# Subroutines for SOCP
+
+def socpsolve(a,eta):
+    m = len(eta)
+    d = len(a[0])
+    for i in range(1,d+1):
+        eta.insert(0,0.)
+    c = matrix(eta)
+    l = [0.]*(d-1)
+    l.insert(0,-1.)
+    l.insert(0,0.)
+    L = [l]
+    for i in range(1,d):
+        l = [0.]*(d-1)
+        l.insert(0,-1.)
+        l.insert(0,0.)
+        l[i],l[i+1] = l[i+1],l[i]
+        L.append(l)
+    p = [0.]*(d)
+    p.insert(0,-1.)
+    L.append(p)
+    for i in range(1,m):
+        L.append([0.]*(d+1))
+    G = [matrix(L)]
+    for i in range(d,d+m-1):
+        L[i],L[i+1] = L[i+1],L[i]
+        G += [matrix(L)]
+    a[0].insert(0,0.)
+    h = [matrix([j*(-1) for j in a[0]])]
+    for i in range(1,m):
+        a[i].insert(0,0.)
+        h += [matrix([j*(-1) for j in a[i]])]
+    sol = solvers.socp(c, Gq = G, hq = h)
+    return sol
+
+# Subroutines for SDP
+
+def sdpsolve(b,eta):
+    a = []
+    m = len(b)
+    for i in range(0,m):
+        a.append(b[i][0])
+        a.append(b[i][1])
+    eta.insert(0,0.)
+    eta.insert(0,0.)
+    eta = matrix(eta)
+    L = [[-1.,0.,0.,1.],
+        [0.,-1.,-1.,0.],
+        [-1.,0.,0.,-1.],
+        [0.,0.,0.,0.]]
+    for i in range(1,m-1):
+        L.append([0.,0.,0.,0.])
+    G = [matrix(L)]
+    for j in range(2,m+1):
+        L[j], L[1+j] = L[1+j], L[j]
+        G += [matrix(L)]
+    h = [matrix([[-a[0],-a[1]],[-a[1],a[0]]])]
+    for k in range(1,m):
+        h += [matrix([[-a[2*k],-a[2*k+1]],[-a[2*k+1],a[2*k]]])]
+    return solvers.sdp(eta, Gs=G, hs=h)
+
+# Subroutine of plotting points
+
+def plotting(list):
+    print "Blue points are given."
+    print "The red point is the Fermat-Torricelli point."
+    AA = point(list[0],size=50)
+    for i in range(1,len(list)-1):
+        AA += point(list[i],size=50)
+    AA += point(list[len(list)-1],size=80,rgbcolor = 'red')
+    for j in range(0,len(list)-1):
+        AA += line([list[j], list[len(list)-1]],rgbcolor = 'green')
+    AA.show()
+
+# Other subroutines
+
+def gen_points(n, d, mu, sigma):
+    points = []
+    for i in range(0, n):
+        p = [0.] * d
+        for j in range(0, d):
+            p[j] = random.normalvariate(mu, sigma)
+        points.append(p)
+    return points
+
+class FermatTorri(object):
+    def __init__(self, points, weights, method):
+        self.points = points
+        self.weights = weights
+        self.method = method
+        if self.method == "weisz":
+            self.sol1 = weiszsolve(self.points[0],self.points,self.weights)
+        elif self.method == "socp":
+            self.sol2 = socpsolve(self.points,self.weights)
+            for i in self.points:
+                i.remove(0)
+            for j in range(0,len(self.points[0])):
+                self.weights.remove(0)
+        elif self.method == "sdp":
+            self.sol3 = sdpsolve(self.points,self.weights)
+            for j in range(0,len(self.points[0])):
+                self.weights.remove(0)
+        else: print "Unavailable method!"
+
+    def data(self):
+        if self.method == "weisz":
+            print "Modified Weiszfeld algorithm"
+        elif self.method == "socp":
+            print "Second Order Cone Programming"
+        elif self.method == "sdp":
+            print "Semidefinite Programming"
+        print "The " + str(len(self.points)) + " points are: " + str(self.points)
+        print "The " + str(len(self.weights)) + " weights are: " + str(self.weights)
+
+
+    def iterations(self):
+        if self.method == "weisz":
+            return self.sol1[0]
+        elif self.method == "socp":
+            return(self.sol2['iterations'])
+        elif self.method == "sdp":
+            return(self.sol3['iterations'])
+
+    def fermat_point(self):
+        if self.method == "weisz":
+            return self.sol1[2]
+        elif self.method == "socp":
+             d = len(self.points[0])
+             return([self.sol2['x'][i] for i in range(0,d)])
+        elif self.method == "sdp":
+             return([self.sol3['x'][0],self.sol3['x'][1]])
+
+    def min_val(self):
+        if self.method == "weisz":
+            return self.sol1[1]
+        elif self.method == "socp":
+             return(self.sol2['primal objective'])
+        elif self.method == "sdp":
+             return(self.sol3['primal objective'])
+
+    def how_long(self):
+        if self.method == "weisz":
+            t1 = Timer(lambda:self.sol1)
+            return t1.timeit(number = 10000)
+        elif self.method == "socp":
+             t2 = Timer(lambda:self.sol2)
+             return t2.timeit(number = 10000)
+        elif self.method == "sdp":
+             t3 = Timer(lambda:self.sol3)
+             return t3.timeit(number = 10000)
+
+    def image(self):
+        if self.method == "weisz":
+            p = self.sol1[2]
+        elif self.method == "socp":
+            d = len(self.points[0])
+            p = [self.sol2['x'][i] for i in range(0,d)]
+        elif self.method == "sdp":
+            p = [self.sol3['x'][0],self.sol3['x'][1]]
+        self.points.append(p)
+        plotting(self.points)
+        self.points.remove(p)
+
+def test_algorithm(n,m,mu,sigma):
+    d = 2
+    weights = [1.]*m
+    iteration_list1 = [0.]*n
+    iteration_list2 = [0.]*n
+    iteration_list3 = [0.]*n
+    time_list1 = [0.]*n
+    time_list2 = [0.]*n
+    time_list3 = [0.]*n
+    for j in range(0,n):
+        points = gen_points(m,d,mu,sigma)
+        sol1 = FermatTorri(points,weights,"weisz")
+        iteration_list1[j] = sol1.iterations()
+        time_list1[j] =  sol1.how_long()
+        sol2 = FermatTorri(points,weights,"socp")
+        iteration_list2[j] = sol2.iterations()
+        time_list2[j] =  sol2.how_long()
+        sol3 = FermatTorri(points,weights,"sdp")
+        iteration_list3[j] = sol3.iterations()
+        time_list3[j] =  sol3.how_long()
+    print "Weiszfeld algorithm median number of iterations: " + str(numpy.median(numpy.array(iteration_list1)))
+    print "Weiszfeld algorithm median time: " + str(numpy.median(numpy.array(time_list1)))
+    print "SOCP median number of iterations: " + str(numpy.median(numpy.array(iteration_list2)))
+    print "SOCP median time: " + str(numpy.median(numpy.array(time_list2)))
+    print "SDP median number of iterations: " + str(numpy.median(numpy.array(iteration_list3)))
+    print "SDP median time: " + str(numpy.median(numpy.array(time_list3)))
+    
+---------------------------------------------
+Some implementation:
+
+A = FermatTorri([[0.,0.],[1.,0.],[3.,1.],[-1.,4.]],[1.5,1.,1.,1.],"socp")
+A.data()
+A.fermat_point()
+A.iterations()
+A.image()
+A.min_val()
+A.how_long()
+test_algorithm(3,3,0,5)
