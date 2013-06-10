@@ -9,5 +9,12 @@ Investigate this challenge problem: given a binary integer a, define an operatio
 Topic 2: 
 Find out the best algorithm to solve the famous Fermat-Torricelli problem with weights. We shall investigate three methods to solve them.
 
-Besides our discussion about how to deal with these two topics. The following shows the exact work each person did. 
+Besides our discussion about how to solve these two problems. The following shows the exact work each person did. 
 
+Hao Chen: Wrote the Sage Worksheet and Report pdf file for Topic 1
+
+Xin Guo: Contributed 21 lines in the codes of Topic 2
+
+Hon Leung Lee: Wrote the Sage Worksheet and Report pdf for Topic 2
+ 
+Di Wu: Contributed 8 lines in the codes of Topic 2
