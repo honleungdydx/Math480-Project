@@ -6,11 +6,13 @@ from cvxopt import matrix, solvers
 from timeit import Timer
 import random
 
-# Subroutines for Weiszfeld
+# Subroutines for Weiszfeld (See the report for the definition of these functions)
 
+# Euclidean distance
 def dist(x,y):
     return numpy.linalg.norm(x-numpy.array(y))
 
+# Define function beta
 def beta(x,a,eta):
     b = 0
     for i in range(0,len(a)):
@@ -18,6 +20,7 @@ def beta(x,a,eta):
             b += eta[i]/dist(x,a[i])
     return 1/b
 
+# Define function Tilde_T
 def Tilde_T(x,a,eta):
     t = numpy.array([0]*len(a[0]))
     for i in range(0,len(a)):
@@ -25,6 +28,7 @@ def Tilde_T(x,a,eta):
             t = t + (eta[i]/dist(x,a[i]))*numpy.array(a[i])
     return beta(x,a,eta)*t
 
+# Define function eta
 def eta_function(x,a,eta):
     e = 0
     for i in range(0,len(a)):
@@ -32,6 +36,7 @@ def eta_function(x,a,eta):
            e = eta[i]
     return e
 
+# Define function r
 def r(x,a,eta):
     s = numpy.array([0]*len(a[0]))
     for i in range(0,len(a)):
@@ -39,6 +44,7 @@ def r(x,a,eta):
             s = s + (eta[i]/dist(x,a[i]))*(numpy.array(a[i])-x)
     return numpy.linalg.norm(s)
 
+# Define the iteration mapping T
 def T(x,a,eta):
     if eta_function(x,a,eta) == 0 and r(x,a,eta) == 0:
         return Tilde_T(x,a,eta)
@@ -48,6 +54,14 @@ def T(x,a,eta):
         return max([1- (eta_function(x,a,eta)/r(x,a,eta)),0.])*Tilde_T(x,a,eta) + \
         min([1,eta_function(x,a,eta)/r(x,a,eta)])*x
 
+"""
+Modified Weiszfeld algorithm
+Input: y = initial point
+       a = list of given points
+       eta = weights
+Output: A list including the number of iterations, minimum value and the
+        Fermat point.
+"""
 def weiszsolve(y,a,eta):
     x = numpy.array(y)
     count = 0
@@ -61,6 +75,13 @@ def weiszsolve(y,a,eta):
 
 # Subroutines for SOCP
 
+"""
+Solving the Fermat-Torricelli problem using second order cone programming
+(SOCP) formulation.
+Input: a = list of given points
+       eta = weights
+Output: The output from the solver in cvxopt
+"""
 def socpsolve(a,eta):
     m = len(eta)
     d = len(a[0])
@@ -96,6 +117,13 @@ def socpsolve(a,eta):
 
 # Subroutines for SDP
 
+"""
+Solving the Fermat-Torricelli problem using semidefinite programming
+(SDP) formulation.
+Input: b = list of given points
+       eta = weights
+Output: The output from the solver in cvxopt
+"""
 def sdpsolve(b,eta):
     a = []
     m = len(b)
@@ -120,8 +148,13 @@ def sdpsolve(b,eta):
         h += [matrix([[-a[2*k],-a[2*k+1]],[-a[2*k+1],a[2*k]]])]
     return solvers.sdp(eta, Gs=G, hs=h)
 
-# Subroutine of plotting points
+# Other subroutines
 
+"""
+Plotting some points on a plane or 3D space.
+Input: list = a list of m+1 points in R2 or R3.
+Output: First m points in blue and the last point in red.
+"""
 def plotting(list):
     print "Blue points are given."
     print "The red point is the Fermat-Torricelli point."
@@ -133,8 +166,14 @@ def plotting(list):
         AA += line([list[j], list[len(list)-1]],rgbcolor = 'green')
     AA.show()
 
-# Other subroutines
-
+"""
+Generate random points using normal distribution.
+Input: d = dimension
+       n = number of points in R^d to be generated
+       mu = mean of each random coordinate
+       sigma = standard deviation of each random coordinate
+Output: A list of random points
+"""
 def gen_points(n, d, mu, sigma):
     points = []
     for i in range(0, n):
@@ -144,6 +183,22 @@ def gen_points(n, d, mu, sigma):
         points.append(p)
     return points
 
+
+# Main process
+
+"""
+Solving the Fermat-Torricelli Problem with Weights, using three methods.
+Input: points = a list of points
+       weights = a list of weights, length of weights is the number of points
+       method = either Weiszfeld ("weisz"), SOCP ("socp") or SDP ("sdp")
+Output: data = The input data and the method
+        iterations = number of iterations in the process, cannot exceed 100
+        fermat_point = the Fermat point
+        min_val = minimum objective value
+        how_long = clock time
+        image = a picture showing the given points and the Fermat point;
+                only works in R2 or R3 (need Java)
+"""
 class FermatTorri(object):
     def __init__(self, points, weights, method):
         self.points = points
@@ -222,6 +277,14 @@ class FermatTorri(object):
         plotting(self.points)
         self.points.remove(p)
 
+"""
+Test the three methods.
+Input: n = number of datasets
+       m = number of points in R2 for each dataset
+       mu,sigma = mean and standard deviation of each random coordinate
+                  (following normal distribution)
+Output: Median clock time and number of iterations of each method
+"""
 def test_algorithm(n,m,mu,sigma):
     d = 2
     weights = [1.]*m
