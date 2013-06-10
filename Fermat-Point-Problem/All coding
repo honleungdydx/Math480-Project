@@ -331,7 +331,7 @@ def test_algorithm(n,m,mu,sigma):
     print "SDP median time: " + str(numpy.median(numpy.array(time_list3)))
     
 ---------------------------------------------
-Examples
+Examples of implementation
 
 A = FermatTorri([[0.,0.],[1.,0.],[3.,1.],[-1.,4.]],[1.5,1.,1.,1.],"socp")
 # For the method, can input "weisz", "socp" or "sdp"
