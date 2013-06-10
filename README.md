@@ -13,11 +13,11 @@ Find out the best algorithm to solve the famous Fermat-Torricelli problem with w
 
 Besides our discussion about how to solve these two problems, the following shows the exact work each person did. 
 
-Hao Chen: Wrote the Sage Worksheet and Report pdf file for Topic 1
+Hao Chen: Wrote the Sage Worksheet and report (in pdf) for Topic 1
 
 Xin Guo: Contributed 21 lines in the codes of Topic 2
 
-Hon Leung Lee: Wrote the Sage Worksheet and Report pdf for Topic 2
+Hon Leung Lee: Wrote the Sage Worksheet and report (in pdf) for Topic 2
  
 Di Wu: Contributed 8 lines in the codes of Topic 2
 
