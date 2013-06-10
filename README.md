@@ -11,7 +11,7 @@ Find out the best algorithm to solve the famous Fermat-Torricelli problem with w
 
 ----------------------------------------------
 
-Besides our discussion about how to solve these two problems, the following shows the exact work each person did. 
+Besides our discussion about how to solve these two problems, the following shows the observable work each person did. 
 
 Hao Chen: Wrote the Sage Worksheet and report (in pdf) for Topic 1
 
